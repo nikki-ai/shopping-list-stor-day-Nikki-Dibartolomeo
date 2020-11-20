@@ -26,6 +26,9 @@ const generateItemElement = function (item) {
         <button class='shopping-item-delete js-item-delete'>
           <span class='button-label'>delete</span>
         </button>
+        <button class='shopping-item-edit js-item-edit'>
+        <span class='button-label'>edit</span>
+      </button>
       </div>
     </li>`;
 };
@@ -127,6 +130,46 @@ const handleDeleteItemClicked = function () {
   });
 };
 
+const handleEditItemClicked = function () {
+  // Like in `handleItemCheckClicked`, 
+  // we use event delegation.
+  $('.js-shopping-list').on('click', '.js-item-edit', event => {
+    // Get the index of the item in store.items.
+    const id = getItemIdFromElement(event.currentTarget);
+    // Delete the item.
+    editListItem(id);
+    // Render the updated shopping list.
+    $('main').html(`<form>
+  <label for="fname">First name:</label><br>
+  <input type="text" id="fname" name="fname"><br>
+  <label for="lname">Last name:</label><br>
+  <input type="text" id="lname" name="lname">
+</form>`);
+    render();
+  });
+};
+
+/**
+ * Responsible for deleting a list item.
+ * @param {string} id 
+ */
+const editListItem = function (id) {
+  // As with 'addItemToShoppingLIst', this 
+  // function also has the side effect of
+  // mutating the global store value.
+  //
+  // First we find the index of the item with 
+  // the specified id using the native
+  // Array.prototype.findIndex() method. 
+  const index = store.items.findIndex(item => item.id === id);
+  // Then we call `.splice` at the index of 
+  // the list item we want to remove, with 
+  // a removeCount of 1.
+  store.items.splice(index, 1);
+
+  
+};
+
 /**
  * Toggles the store.hideCheckedItems property
  */
@@ -160,6 +203,7 @@ const handleShoppingList = function () {
   handleItemCheckClicked();
   handleDeleteItemClicked();
   handleToggleFilterClick();
+  handleEditItemClicked();
 };
 
 // when the page loads, call `handleShoppingList`
